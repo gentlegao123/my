@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.st.mall.order.mapper.addressMapper">  <!--  命名空间接口 -->
+  	<!-- Result Map 映射 -->
+	<resultMap id="BaseResultMap" type="com.st.mall.order.model.AddressModel">   <!-- 实体类名 -->
+		<result column="id" property="id" />  <!--   字段名，实体类属性名 -->
+		<result column="customer_code" property="customerCode" />
+		<result column="name" property="name" />
+		<result column="tel" property="tel" />
+		<result column="province" property="province" />
+		<result column="city" property="city" />
+		<result column="region" property="region" />
+		<result column="other" property="other" />
+	</resultMap>
+	<!-- 拼接条件 -->
+	<sql id="where">
+	where 1=1
+	<if test="id!=null">and id =#{id}</if>
+	<if test="customerCode != null and customerCode!=''">and customer_code like #{customerCode}</if>
+	<if test="name!=null and name!=''">and name like #{name}</if>
+	<if test="tel!=null and tel!=''">and tel like #{tel}</if>
+	<if test="province!=null and province!=''">and province like #{province}</if>
+	<if test="city!=null and city!=''">and city like #{city}</if>
+    <if test="region!=null and region!=''">and region like #{region}</if>
+    <if test="other!=null and other!=''">and other like #{other}</if>
+	</sql>
+<!-- 查询内容 -->	
+		<sql id="list">
+		id,customer_code,name,tel,province,city,region,other,		
+		(select d.sort_name from mall.goods_sort d where d.sort_code=address.province) nameProvince,
+		(select d.sort_name from mall.goods_sort d where d.sort_code=address.city) nameCity,
+		(select d.sort_name from mall.goods_sort d where d.sort_code=address.region) nameRegion
+	</sql>
+	
+<!-- 增 -->
+	<insert id="insert" parameterType="Object">
+	insert into mall.address(customer_code,name,tel,province,city,region,other) 
+	values (#{customerCode},#{name},#{tel},#{province},#{city},#{region},#{other})
+	</insert>
+	
+<!-- 删1 -->
+	<delete id="delete" parameterType="Object">
+	delete from mall.address where id=#{id}
+	</delete>
+ <!-- 修改2 -->
+	<update id="update" parameterType="Object">
+	update mall.address set 
+	<trim suffixOverrides=","> 
+	<if test="customerCode!=null and customerCode!=''">customer_code = #{customerCode},</if>
+	<if test="name != null and name!=''">name = #{name},</if>
+	<if test="tel!=null and tel!=''">tel = #{tel},</if>
+	<if test="province!=null and province!=''">province = #{province},</if>
+	<if test="city!=null and city!=''">city = #{city},</if>
+	<if test="region != null and region!=''">region = #{region},</if>
+	</trim>
+	where id = #{id}
+	</update>
+<!-- 查询一个 -->
+	<select id="select" resultMap="BaseResultMap" parameterType="Object">
+		select <include refid="list" />
+		from mall.address where id = #{id}
+	</select>
+<!-- 条件查询所有 -->
+	<select id="selectAll" resultMap="BaseResultMap" parameterType="Object">
+		select <include refid="list" />
+		from mall.address
+		<include refid="where" />
+	</select>
+	
+<!-- 查询条数 -->
+	<select id="selectCount" resultType="java.lang.Integer" parameterType="Object">
+		select count(1) from mall.address
+		<include refid="where" />
+	</select>
+<!-- 查询分页列表 -->
+	<select id="selectList" resultMap="BaseResultMap" parameterType="Object">
+		select <include refid="list" />
+		from mall.address
+		<include refid="where" />
+		limit ${rowStart},${pageLimit}
+	</select>
+	
+	
+	
+	</mapper>

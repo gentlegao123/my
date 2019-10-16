@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.st.mall.goods.mapper.GoodsMapper">  <!--  命名空间接口 -->
+  	<!-- Result Map 映射 -->
+	<resultMap id="BaseResultMap" type="com.st.mall.goods.model.GoodsModel">   <!-- 实体类名 -->
+		<result column="id" property="id" />  <!--   字段名，实体类属性名 -->
+		<result column="goods_code" property="goodsCode" />
+		<result column="goods_name" property="goodsName" />
+		<result column="goods_price" property="price" />
+		<result column="goods_descr" property="descr" />
+		<result column="goods_num" property="goodsNum" />
+		<result column="goods_status" property="status" />
+		<result column="sort_code" property="sortCode" />
+		<result column="image_name" property="imageName" />
+	</resultMap>
+	<!-- 拼接条件 -->
+	<sql id="where">
+	where 1=1
+	<if test="id!=null">and id =#{id}</if>
+	<if test="goodsCode != null and goodsCode!=''">and goods_code like #{goodsCode}</if>
+	<if test="goodsName!=null and goodsName!=''">and goods_name like #{goodsName}</if>
+	<if test="price!=null and price!=''">and goods_price = #{price}</if>
+	<if test="descr!=null and descr!=''">and goods_descr like #{descr}</if>
+	<if test="goodsNum!=null and goodsNum!=''">and goods_num = #{goodsNum}</if>
+	<if test="status!=null and status!=''">and goods_status = #{status}</if>
+	<if test="sortCode!=null and sortCode!=''">and sort_code like #{sortCode}</if>
+	</sql>
+<!-- 查询内容 -->
+	
+		<sql id="list">
+		id, goods_code, goods_name,goods_price,goods_descr,goods_num,goods_status,sort_code,(select d.sort_name from mall.goods_sort d where d.sort_code=goods.sort_code) nameSort
+	</sql>
+	
+<!-- 增 -->
+	<insert id="insert" parameterType="Object">
+	insert into mall.goods(goods_code, goods_name,goods_price,goods_descr,goods_num,goods_status,sort_code) 
+	values (#{goodsCode},#{goodsName},#{price},#{descr},#{goodsNum},#{status},#{sortCode})
+	</insert>
+	
+<!-- 删1 -->
+	<delete id="delete" parameterType="Object">
+	delete from mall.goods where goods_code=#{goodsCode}
+	</delete>
+ <!-- 修改2 -->
+	<update id="update" parameterType="Object">
+	update mall.goods set 
+	<trim suffixOverrides=","> 
+    <if test="goodsCode != null and goodsCode!=''">goods_code = #{goodsCode},</if>
+	<if test="goodsName!=null and goodsName!=''">goods_name = #{goodsName},</if>
+	<if test="price!=null and price!=''">goods_price = #{price},</if>
+	<if test="descr!=null and descr!=''">goods_descr = #{descr},</if>
+	<if test="goodsNum!=null and goodsNum!=''">goods_num = #{goodsNum},</if>
+	<if test="status!=null and status!=''">goods_status = #{status},</if>
+	<if test="sortCode!=null and sortCode!=''">sort_code = #{sortCode},</if>
+	</trim>
+	where goods_code = #{goodsCode}
+	</update>
+<!-- 查询一个 -->
+	<select id="select" resultMap="BaseResultMap" parameterType="Object">
+		select <include refid="list" />
+		from mall.goods where goods_code = #{goodsCode}
+	</select>
+<!-- 条件查询所有 -->
+	<select id="selectAll" resultMap="BaseResultMap" parameterType="Object">
+		select <include refid="list" />
+		from mall.goods
+		<include refid="where" />
+	</select>
+	
+<!-- 查询条数 -->
+	<select id="selectCount" resultType="java.lang.Integer" parameterType="Object">
+		select count(1) from mall.goods
+		<include refid="where" />
+	</select>
+<!-- 查询分页列表 -->
+	<select id="selectList" resultMap="BaseResultMap" parameterType="Object">
+		select <include refid="list" />
+		from mall.goods
+		<include refid="where" />
+		limit ${rowStart},${pageLimit}
+	</select>
+	
+<select id="selectMain" resultMap="BaseResultMap" parameterType="Object">	
+	select s.*,
+(select i.image_name from mall.goods_image as i 
+where i.goods_code=s.goods_code 
+<if test="imageType!=null and imageType!=''">
+  and image_type=#{imageType}
+</if>
+) as image_name from mall.goods as s 
+<include refid="where" />
+
+	</select>
+	
+	</mapper>

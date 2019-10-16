@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.st.mall.order.mapper.OrderMapper">  <!--  命名空间接口 -->
+  	<!-- Result Map 映射 -->
+	<resultMap id="BaseResultMap" type="com.st.mall.order.model.OrderModel">   <!-- 实体类名 -->
+		<result column="id" property="id" />  <!--   字段名，实体类属性名 -->
+		<result column="order_code" property="orderCode" />
+		<result column="customer_code" property="customerCode" />
+		<result column="time" property="time" />
+		<result column="status" property="status" />
+		<result column="address_id" property="addressCode" />
+	</resultMap>
+	<!-- 拼接条件 -->
+	<sql id="where">
+	where 1=1
+	<if test="id!=null">and id =#{id}</if>
+	<if test="orderCode != null and orderCode!=''">and order_code like #{orderCode}</if>
+	<if test="customerCode!=null and customerCode!=''">and customer_Code like #{customerCode}</if>
+	<if test="time!=null and time!=''">and time like #{time}</if>
+	<if test="status!=null and status!=''">and status like #{status}</if>
+	<if test="addressCode!=null and addressCode!=''">and address_id like #{addressCode}</if>
+	</sql>
+<!-- 查询内容 -->
+		<sql id="list">
+		id, order_code, customer_code,time,status,address_id
+	</sql>
+	
+<!-- 增 -->
+	<insert id="insert" parameterType="Object">
+	insert into mall.order(order_code, customer_code,time,status,address_id) 
+	values (#{orderCode},#{customerCode},#{time},#{status},#{addressCode})
+	</insert>
+	
+<!-- 删1 -->
+	<delete id="delete" parameterType="Object">
+	delete from mall.order where order_code=#{orderCode}
+	</delete>
+ <!-- 修改2 -->
+	<update id="update" parameterType="Object">
+	update mall.order set 
+	<trim suffixOverrides=","> 
+
+    <if test="orderCode != null and orderCode!=''">order_code = #{orderCode},</if>
+	<if test="customerCode!=null and customerCode!=''">customer_code = #{customerCode},</if>
+	<if test="time!=null and time!=''">time = #{time},</if>
+	<if test="status!=null and status!=''">status = #{status},</if>
+	<if test="addressCode!=null and addressCode!=''">address_id = #{addressCode},</if>
+
+
+
+	</trim>
+	where order_code = #{orderCode}
+	</update>
+<!-- 查询一个 -->
+	<select id="select" resultMap="BaseResultMap" parameterType="Object">
+		select <include refid="list" />
+		from mall.order where order_code = #{orderCode}
+	</select>
+<!-- 条件查询所有 -->
+	<select id="selectAll" resultMap="BaseResultMap" parameterType="Object">
+		select <include refid="list" />
+		from mall.order
+		<include refid="where" />
+	</select>
+	
+<!-- 查询条数 -->
+	<select id="selectCount" resultType="java.lang.Integer" parameterType="Object">
+		select count(1) from mall.order
+		<include refid="where" />
+	</select>
+<!-- 查询分页列表 -->
+	<select id="selectList" resultMap="BaseResultMap" parameterType="Object">
+		select <include refid="list" />
+		from mall.order
+		<include refid="where" />
+		limit ${rowStart},${pageLimit}
+	</select>
+	
+	
+	
+	</mapper>

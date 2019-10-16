@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.st.mall.order.mapper.ShopcartMapper">  <!--  命名空间接口 -->
+  	<!-- Result Map 映射 -->
+	<resultMap id="BaseResultMap" type="com.st.mall.order.model.ShopcartModel">   <!-- 实体类名 -->
+		<result column="id" property="id" />  <!--   字段名，实体类属性名 -->
+		<result column="goods_code" property="goodsCode" />
+		<result column="customer_code" property="customerCode" />
+		<result column="goods_num" property="goodsNum" />
+		<result column="price" property="price" />	
+	</resultMap>
+	<!-- 拼接条件 -->
+	<sql id="where">
+	where 1=1
+	<if test="id!=null">and id =#{id}</if>
+	<if test="goodsCode != null and goodsCode!=''">and goods_code like #{goodsCode}</if>
+	<if test="customerCode!=null and customerCode!=''">and customer_Code like #{customerCode}</if>
+	<if test="goodsNum!=null and goodsNum!=''">and goods_num like #{goodsNum}</if>
+	<if test="price!=null and price!=''">and price like #{price}</if>
+	</sql>
+<!-- 查询内容 -->
+		<sql id="list">
+		id, goods_code, customer_code,goods_num,price,
+		(select a.goods_descr from mall.goods a where a.goods_code=shopcart.goods_code ) goodsDescr,
+		(select a.image_name from mall.goods_image a where a.goods_code=shopcart.goods_code and image_type=1) imageName
+	</sql>
+	
+<!-- 增 -->
+	<insert id="insert" parameterType="Object">
+	insert into mall.shopcart(goods_code,customer_code,goods_num,price) 
+	values (#{goodsCode},#{customerCode},#{goodsNum},#{price})
+	</insert>
+	
+<!-- 删1 -->
+	<delete id="delete" parameterType="Object">
+	delete from mall.shopcart where 1=1
+	<if test="id != null and id!=''">and id = #{id}</if>
+	<if test="goodsCode != null and goodsCode!=''">and goods_code=#{goodsCode}</if>
+	<if test="customerCode!=null and customerCode!=''">and customer_Code=#{customerCode}</if>
+	</delete>
+ <!-- 修改2 -->
+	<update id="update" parameterType="Object">
+	update mall.shopcart set 
+	<trim suffixOverrides=","> 
+    <if test="goodsCode != null and goodsCode!=''">goods_code = #{goodsCode},</if>
+	<if test="customerCode!=null and customerCode!=''">customer_code = #{customerCode},</if>
+	<if test="goodsNum!=null and goodsNum!=''">goods_num = #{goodsNum},</if>
+	<if test="price!=null and price!=''">price = #{price},</if>
+	</trim>
+	where 1=1
+		<if test="id != null and id!=''">and id like #{id}</if>
+	<if test="goodsCode != null and goodsCode!=''">and goods_code like #{goodsCode}</if>
+	<if test="customerCode!=null and customerCode!=''">and customer_Code like #{customerCode}</if>
+	</update>
+<!-- 查询一个 -->
+	<select id="select" resultMap="BaseResultMap" parameterType="Object">
+		select <include refid="list" />
+		from mall.shopcart 
+         <include refid="where" />
+	</select>
+<!-- 条件查询所有 -->
+	<select id="selectAll" resultMap="BaseResultMap" parameterType="Object">
+		select <include refid="list" />
+		from mall.shopcart
+		<include refid="where" />
+	</select>
+	
+<!-- 查询条数 -->
+	<select id="selectCount" resultType="java.lang.Integer" parameterType="Object">
+		select count(1) from mall.shopcart
+		<include refid="where" />
+	</select>
+<!-- 查询分页列表 -->
+	<select id="selectList" resultMap="BaseResultMap" parameterType="Object">
+		select <include refid="list" />
+		from mall.shopcart
+		<include refid="where" />
+		limit ${rowStart},${pageLimit}
+	</select>
+	
+	
+	
+	</mapper>

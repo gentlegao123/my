@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.st.mall.goods.mapper.GoodsImageMapper">  <!--  命名空间接口 -->
+  	<!-- Result Map 映射 -->
+	<resultMap id="BaseResultMap" type="com.st.mall.goods.model.GoodsImageModel">   <!-- 实体类名 -->
+		<result column="id" property="id" />  <!--   字段名，实体类属性名 -->
+		<result column="goods_code" property="goodsCode" />
+		<result column="image_name" property="imageName" />
+		<result column="image_type" property="imageType" />
+
+	</resultMap>
+	<!-- 拼接条件 -->
+	<sql id="where">
+	where 1=1
+    <if test="id != null and id!=''">and id=#{id}</if>
+	<if test="goodsCode != null and goodsCode!=''">and goods_code like #{goodsCode}</if>
+	<if test="imageName!=null and imageName!=''">and image_name like #{imageName}</if>
+	<if test="imageType!=null and imageType!=''">and image_type = #{imageType}</if>
+	</sql>
+<!-- 查询内容 -->
+	
+	<sql id="list">
+		id, goods_code,image_name,image_type
+	</sql>
+	
+<!-- 增 -->
+	<insert id="insert" parameterType="Object">
+	insert into mall.goods_image(goods_code,image_name,image_type) 
+	values (#{goodsCode},#{imageName},#{imageType})
+	</insert>
+	
+<!-- 删1 -->
+	<delete id="delete" parameterType="Object">
+	delete from mall.goods_image where id=#{id}
+	</delete>
+ <!-- 修改2 -->
+ 	<update id="update" parameterType="Object">
+	update mall.goods_image set 
+	<trim suffixOverrides=","> 	  
+    <if test="goodsCode != null and goodsCode!=''">goods_code = #{goodsCode},</if>
+	<if test="imageName!=null and imageName!=''">image_name = #{imageName},</if>
+	<if test="imageType!=null and imageType!=''">image_type = #{imageType},</if>
+	</trim>
+	where 1=1 
+ 
+    <if test="goodsCode != null and goodsCode!=''">and goods_code = #{goodsCode}</if>
+	<if test="id!=null and id!=''">and id = #{id}</if>
+
+	</update> 
+	
+	
+	
+	
+<!-- 查询一个 -->
+	<select id="select" resultMap="BaseResultMap" parameterType="Object">
+		select <include refid="list" />
+		from mall.goods_image where id = #{id}
+	</select>
+<!-- 条件查询所有 -->
+	<select id="selectAll" resultMap="BaseResultMap" parameterType="Object">
+		select <include refid="list" />
+		from mall.goods_image
+		<include refid="where" />
+		order by image_type 
+	</select>
+	
+<!-- 查询条数 -->
+<!-- 	<select id="selectCount" resultType="java.lang.Integer" parameterType="Object">
+		select count(1) from mall.goods
+		<include refid="where" />
+	</select>
+查询分页列表
+	<select id="selectList" resultMap="BaseResultMap" parameterType="Object">
+		select <include refid="list" />
+		from mall.goods
+		<include refid="where" />
+		limit ${rowStart},${pageLimit}
+	</select>
+	 -->
+	
+	
+	</mapper>

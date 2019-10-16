@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC 
+"-//mybatis.org//DTD Config 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+		<!-- 打印查询语句 -->
+	<settings>
+		<setting name="logImpl" value="STDOUT_LOGGING" />    <!-- 控制台中看到SQL语句的执行情况 -->
+	</settings>
+
+<!-- 	<typeAliases>         别名
+		<typeAlias alias="UserModel" type="com.st.ceshi.staff.model.StaffModel" />
+	</typeAliases> -->
+
+	<mappers>     
+		<mapper resource="com/st/mall/goods/mapper/GoodsMapper.xml" />
+		<mapper resource="com/st/mall/goods/mapper/GoodsSortMapper.xml" />
+        <mapper resource="com/st/mall/customer/mapper/CustomerMapper.xml" />
+        <mapper resource="com/st/mall/order/mapper/OrderMapper.xml" />
+        <mapper resource="com/st/mall/goods/mapper/GoodsImageMapper.xml" />
+        <mapper resource="com/st/mall/order/mapper/OrderGoodsMapper.xml" />
+        <mapper resource="com/st/mall/order/mapper/addressMapper.xml" />
+        <mapper resource="com/st/mall/order/mapper/ShopcartMapper.xml" />      
+	</mappers>
+	
+	
+</configuration>

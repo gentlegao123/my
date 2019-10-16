@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.st.mall.customer.mapper.CustomerMapper">  <!--  命名空间接口 -->
+  	<!-- Result Map 映射 -->
+	<resultMap id="BaseResultMap" type="com.st.mall.customer.model.CustomerModel">   <!-- 实体类名 -->
+		<result column="id" property="id" />  <!--   字段名，实体类属性名 -->
+		<result column="customer_code" property="customerCode" />
+		<result column="customer_pass" property="customerPass" />
+		<result column="customer_name" property="customerName" />
+		<result column="identify" property="identify" />
+	</resultMap>
+	
+		<!-- 拼接条件 -->
+	<sql id="where">
+	where 1=1
+	<if test="id!=null">and id =#{id}</if>
+	<if test="customerCode != null and customerCode!=''">and customer_code like #{customerCode}</if>
+	<if test="customerName!=null and customerName!=''">and customer_name like #{customerName}</if>
+	<if test="customerPass!=null and customerPass!=''">and customer_pass = #{customerPass}</if>
+	<if test="identify!=null and identify!=''">and identify = #{identify}</if>
+	</sql>
+	
+	<!-- 查询内容 -->
+		<sql id="list">
+		id, customer_code, customer_name,customer_pass,identify
+	</sql>
+		<!-- 增 -->
+	<insert id="insert" parameterType="Object">
+	insert into mall.customer(customer_code, customer_name,customer_pass,identify) 
+	values (#{customerCode},#{customerName},#{customerPass},#{identify})
+	</insert>
+<!-- 	删 -->
+	
+		<delete id="delete" parameterType="Object">
+	delete from mall.customer where customer_code=#{customerCode}
+	</delete>
+	
+	
+<!-- 查 -->
+	 	<select id="select" resultMap="BaseResultMap" parameterType="Object">
+	select <include refid="list" />
+	from mall.customer where id=#{id}
+	</select>
+	
+	
+	 <!--    修改2 -->
+	<update id="update" parameterType="Object">
+	update mall.customer set 
+	<trim suffixOverrides=","> 
+	<if test="customerCode != null and customerCode!=''">customer_code = #{customerCode},</if>
+	<if test="customerName!=null and customerName!=''">customer_name = #{customerName},</if>
+	<if test="customerPass!=null and customerPass!=''">customer_pass = #{customerPass},</if>
+	<if test="identify!=null and identify!=''">identify = #{identify},</if>
+	</trim>
+	where customer_code =#{customerCode}
+	</update>
+	
+	<!-- 条件查询所有 -->
+	<select id="selectAll" resultMap="BaseResultMap" parameterType="Object">
+		select <include refid="list" />
+		from mall.customer
+		<include refid="where" />
+	</select>
+	
+<!-- 查询条数 -->
+	<select id="selectCount" resultType="java.lang.Integer" parameterType="Object">
+		select count(1) from mall.customer
+		<include refid="where" />
+	</select>
+<!-- 查询分页列表 -->
+	<select id="selectList" resultMap="BaseResultMap" parameterType="Object">
+		select <include refid="list" />
+		from mall.customer
+		<include refid="where" />
+		limit ${rowStart},${pageLimit}
+	</select>
+	
+	
+	</mapper>

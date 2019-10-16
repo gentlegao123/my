@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.st.mall.goods.mapper.GoodsSortMapper">  <!--  命名空间接口 -->
+  	<!-- Result Map 映射 -->
+	<resultMap id="BaseResultMap" type="com.st.mall.goods.model.GoodsSortModel">   <!-- 实体类名 -->
+		<result column="id" property="id" />  <!--   字段名，实体类属性名 -->
+		<result column="sort_code" property="sortCode" />
+		<result column="sort_name" property="sortName" />
+		<result column="sort_descr" property="sortDescr" />
+		<result column="parent_code" property="parentCode" />
+	</resultMap>
+	<!-- 拼接条件 -->
+	<sql id="where">
+	where 1=1
+	<if test="id!=null">and id =#{id}</if>
+	<if test="sortCode != null and sortCode!=''">and sort_code like #{sortCode}</if>
+	<if test="sortName!=null and sortName!=''">and sort_name like #{sortName}</if>
+	<if test="sortDescr!=null and sortDescr!=''">and sort_descr like #{sortDescr}</if>
+	<if test="parentCode!=null and parentCode!=''">and parent_code like #{parentCode}</if>
+
+	</sql>
+<!-- 查询内容 -->
+	
+		<sql id="list">
+		id, sort_code, sort_name,sort_descr,parent_code
+	</sql>
+	
+<!-- 增 -->
+	<insert id="insert" parameterType="Object">
+	insert into mall.goods_sort(sort_code, sort_name,sort_descr,parent_code) 
+	values (#{sortCode},#{sortName},#{sortDescr},#{parentCode})
+	</insert>
+	
+<!-- 删1 -->
+	<delete id="delete" parameterType="Object">
+	delete from mall.goods_sort where sort_code=#{sortCode}
+	</delete>
+ <!-- 修改2 -->
+	<update id="update" parameterType="Object">
+	update mall.goods_sort set 
+	<trim suffixOverrides=","> 
+
+    <if test="sortCode != null and sortCode!=''">sort_code = #{sortCode},</if>
+	<if test="sortName!=null and sortName!=''">sort_name = #{sortName},</if>
+	<if test="sortDescr!=null and sortDescr!=''">sort_descr = #{sortDescr},</if>
+	<if test="parentCode!=null and parentCode!=''">parent_code = #{parentCode},</if>
+
+
+
+	</trim>
+	where sort_code = #{sortCode}
+	</update>
+<!-- 查询一个 -->
+	<select id="select" resultMap="BaseResultMap" parameterType="Object">
+		select <include refid="list" />
+		from mall.goods_sort where sort_code = #{sortCode}
+	</select>
+<!-- 条件查询所有 -->
+	<select id="selectAll" resultMap="BaseResultMap" parameterType="Object">
+		select <include refid="list" />
+		from mall.goods_sort
+		<include refid="where" />
+	</select>
+	
+<!-- 查询条数 -->
+	<select id="selectCount" resultType="java.lang.Integer" parameterType="Object">
+		select count(1) from mall.goods_sort
+		<include refid="where" />
+	</select>
+<!-- 查询分页列表 -->
+	<select id="selectList" resultMap="BaseResultMap" parameterType="Object">
+		select <include refid="list" />
+		from mall.goods_sort
+		<include refid="where" />
+		limit ${rowStart},${pageLimit}
+	</select>
+	
+	
+	
+	</mapper>
